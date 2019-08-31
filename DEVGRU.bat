@@ -1,3 +1,7 @@
+REM https://github.com/xeroceph/DEVGRU
+REM v0.2
+REM GNU General Public License v3.0
+
 @setlocal enableextensions enabledelayedexpansion
 @echo off
 set ipaddr=8.8.8.8
@@ -8,9 +12,9 @@ echo DEVGRU initialized.
 echo ---------------------- >> DEVGRU_log.txt
 date /t >> DEVGRU_log.txt
 time /t >> DEVGRU_log.txt
-echo DEVGRU initialized >> DEVGRU_log.txt
+echo [INFO] DEVGRU initialized >> DEVGRU_log.txt
 
-REM wait four minutes for any IP applications to connect
+REM wait four minutes for any IP applications to start up
 timeout 240
 
 REM begin loop to check if IP is reachable
@@ -34,20 +38,21 @@ goto :loop
 REM if network traffic was latent, we want to set the failsafe_count flag
 REM and try one more time before rebooting
 if %failsafe_count%==1 goto :initreboot
+echo Network connectivity issues detected...
+echo ---------------------- >> DEVGRU_log.txt
+date /t >> DEVGRU_log.txt
+time /t >> DEVGRU_log.txt
+echo [WARNING] First occurence of network failure, setting failsafe flag >> DEVGRU_log.txt
 set failsafe_count=1
 timeout 300
 goto :loop
 
 REM begin reboot process
 :initreboot
-echo Rebooting in two minutes to restore connectivity...
+echo Network connectivity issues continuing. Rebooting momentarily to restore connectivity...
+timeout 15
 echo ---------------------- >> DEVGRU_log.txt
 date /t >> DEVGRU_log.txt
 time /t >> DEVGRU_log.txt
-echo Rebooting in two minutes to restore connectivity... >> DEVGRU_log.txt
-timeout 180
-echo ---------------------- >> DEVGRU_log.txt
-date /t >> DEVGRU_log.txt
-time /t >> DEVGRU_log.txt
-echo Rebooting now... >> DEVGRU_log.txt
+echo [WARNING] Second occurence of network failure - rebooting now... >> DEVGRU_log.txt
 shutdown -r -f
