@@ -31,6 +31,15 @@ timeout 300
 goto :loop
 
 :endloop
+REM if network traffic was latent, we want to set the failsafe_count flag
+REM and try one more time before rebooting
+if %failsafe_count%==1 goto :initreboot
+set failsafe_count=1
+timeout 300
+goto :loop
+
+REM begin reboot process
+:initreboot
 echo Rebooting in two minutes to restore connectivity...
 echo ---------------------- >> DEVGRU_log.txt
 date /t >> DEVGRU_log.txt
